@@ -6,7 +6,7 @@ The majority of rendering logic lives in `main.cpp` with a few steps abstracted 
 
 - `camera.h` `camera.cpp` &nbsp; &nbsp; &rarr; &nbsp; &nbsp; simple fly-like camera system
 - `shader.h` `shader.cpp` &nbsp; &nbsp; &rarr; &nbsp; &nbsp; shader init and use
-- `mesh.h` `model.h ` &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &rarr; &nbsp; &nbsp;  model processor 
+- `mesh.h` `model.h` &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &rarr; &nbsp; &nbsp;  model processor 
 
 Files beginning with [`stb`](https://github.com/nothings/stb) are header dependencies that process images/textures and write framebuffer data to image files.
 
@@ -16,7 +16,11 @@ All models were designed in [Blender](https://www.blender.org/). Textures for th
 ### Shaders 
 Most of the magic lives in `water.frag`. If you are interested in designing a similar water shader, [ThinMatrix's OpenGL Water Tutorial](https://www.youtube.com/watch?v=HusvGeEDU_U) is an incredible resource. 
 
-## Setup 
+## Setup
+You will need `CMake` and `vcpkg` to build and run this demo.
+
+***NOTE:*** this CMake preset requires an environment variable `VCPKG_ROOT` which should point to the root directory where your version of `vcpkg` is installed. 
+
 ### 1. Clone 
 ```
 git clone https://github.com/jebef/lone-palm-island.git
@@ -24,12 +28,12 @@ cd lone-palm-island
 ```
 ### 2. Build with CMake 
 ```
-cmake --preset dev
-cmake --build build/dev
+cmake --preset release
+cmake --build build/release
 ```
 ### 3. Run
 ```
-./build/dev/LonePalmIsland
+./build/release/LonePalmIsland
 ```
 
 - `WASD` and `mouse` for movement 

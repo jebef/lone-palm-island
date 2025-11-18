@@ -1,0 +1,10 @@
+{
+    "name": "lone-palm-island",
+    "version-string": "1.0.0",
+    "dependencies": [
+        "glad", 
+        "glfw3",
+        "glm", 
+        "assimp"
+    ]
+}

@@ -1,0 +1,36 @@
+# Build artifacts
+app
+app.dSYM/
+build/
+cmake-build-*/
+*.o
+*.a
+*.dylib
+*.so
+*.dll
+*.exe
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.log
+*.cache
+
+# Generated files
+img*.png
+

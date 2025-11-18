@@ -71,38 +71,38 @@ int main()
     //stbi_set_flip_vertically_on_load(true);
 
     // ----------- CONSTRUCT SHADER PROGRAMS ----------- //
-    Shader terrain_shader = Shader("src/shaders/terrain.vert", "src/shaders/terrain.frag");
-    Shader water_shader = Shader("src/shaders/water.vert", "src/shaders/water.frag");
-    Shader island_cap_refraction_shader = Shader("src/shaders/island-cap.vert", "src/shaders/island-cap.frag", "src/shaders/island-cap-refract.geom");
-    Shader island_cap_reflection_shader = Shader("src/shaders/island-cap.vert", "src/shaders/island-cap.frag", "src/shaders/island-cap-reflect.geom");
-    Shader gui_debug_shader = Shader("src/shaders/gui.vert", "src/shaders/gui.frag");
-    Shader axes_debug_shader("src/shaders/axes.vert", "src/shaders/axes.frag");
-    Shader light_orb_shader("src/shaders/light_orb.vert", "src/shaders/light_orb.frag");
+    Shader terrain_shader = Shader("shaders/terrain.vert", "shaders/terrain.frag");
+    Shader water_shader = Shader("shaders/water.vert", "shaders/water.frag");
+    Shader island_cap_refraction_shader = Shader("shaders/island-cap.vert", "shaders/island-cap.frag", "shaders/island-cap-refract.geom");
+    Shader island_cap_reflection_shader = Shader("shaders/island-cap.vert", "shaders/island-cap.frag", "shaders/island-cap-reflect.geom");
+    Shader gui_debug_shader = Shader("shaders/gui.vert", "shaders/gui.frag");
+    Shader axes_debug_shader("shaders/axes.vert", "shaders/axes.frag");
+    Shader light_orb_shader("shaders/light_orb.vert", "shaders/light_orb.frag");
 
     const std::vector<Shader> lit_shaders = { terrain_shader, water_shader, island_cap_reflection_shader, island_cap_refraction_shader };
 
     // ----------- LOAD MODELS ----------- //
-    Model palm_tree("src/resources/models/palm_tree/palm-tree.obj");
+    Model palm_tree("assets/models/palm_tree/palm-tree.obj");
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
     model = glm::translate(model, glm::vec3(-4.0f, 2.0f, 2.0f));
     palm_tree.SetModelMatrix(model);
     palm_tree.SetSpecularIntensity(1.0f);
 
-    Model island("src/resources/models/island/island.obj");
+    Model island("assets/models/island/island.obj");
     model = glm::mat4(1.0f);
     model = glm::scale(model, glm::vec3(2.0f));
     model = glm::translate(model, glm::vec3(0.0f, -10.0f, 0.0f));
     island.SetModelMatrix(model);
     island.SetSpecularIntensity(0.0f);
 
-    Model water("src/resources/models/water/water.obj");
+    Model water("assets/models/water/water.obj");
     model = glm::mat4(1.0f);
     model = glm::scale(model, glm::vec3(10.0f));
     water.SetModelMatrix(model);
     water.SetSpecularIntensity(1.0f);
 
-    Model light_orb("src/resources/models/light_orb/light_orb.obj");
+    Model light_orb("assets/models/light_orb/light_orb.obj");
 
     const std::vector<Model> terrain_models = { island, palm_tree };
     
@@ -110,7 +110,7 @@ int main()
     // ----------- DEFINE LIGHTING UNIFORMS ----------- // 
 
     // global properties 
-    bool directional_only = false;
+    bool directional_only = false; // default is false
     float reflectivity = 32.0f;
     // directional light 
     glm::vec3 dl_direction = glm::vec3(0.0f, -1.0f, 0.0f);
@@ -200,8 +200,8 @@ int main()
     water_shader.setInt("dudv_map", 2);
     water_shader.setInt("normal_map", 3);
     // load dudv and normal textures 
-    unsigned int water_dudv = TextureFromFile("src/resources/textures/water/dudv.png", ".");
-    unsigned int water_normal = TextureFromFile("src/resources/textures/water/normal.png", ".");
+    unsigned int water_dudv = TextureFromFile("assets/textures/water/dudv.png", ".");
+    unsigned int water_normal = TextureFromFile("assets/textures/water/normal.png", ".");
     // init water frame buffers 
     WaterFrameBuffers(water_fbos);
     // set static model matrix uniform 
@@ -357,10 +357,9 @@ int main()
         terrain_shader.setVec4("clip_plane", reflection_clip_plane);
         // bind reflection framebuffer and render terrain
         water_fbos.BindReflectionFrameBuffer();
-        // glClearColor(0.0f, 0.0f, 0.6f, 0.5f);
-        //glClearColor(0.2f, 0.0f, 0.2f, 1.0f); 
-        //glClearColor(0.0f, 0.0f, 0.0f, 1.0f); 
-        glClearColor(sky_color.r * osc, sky_color.g * osc, sky_color.b * osc, 1.0f);
+        //glClearColor(sky_color.r * osc, sky_color.g * osc, sky_color.b * osc, 1.0f);
+        //glClearColor(sky_color.r, sky_color.g, sky_color.b, 1.0f);
+        glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         RenderScene(terrain_models, terrain_shader, reflected_camera_pos, reflection_view_mat, projection_mat);
         // render island reflection cap
@@ -370,7 +369,7 @@ int main()
         // unbind reflection framebuffer  
         water_fbos.UnbindCurrentFrameBuffer();
 
-        // --- RENDER SCENE TO REFLECTION BUFFER --- //
+        // --- RENDER SCENE TO REFRACTION BUFFER --- //
         // activate terrain shader 
         terrain_shader.use();
         // define refraction clip plane and set uniform
@@ -378,10 +377,9 @@ int main()
         terrain_shader.setVec4("clip_plane", refraction_clip_plane);
         // bind refraction framebuffer and render terrain
         water_fbos.BindRefractionFrameBuffer();
-        // glClearColor(0.0f, 0.0f, 0.6f, 0.5f); 
-        //glClearColor(0.2f, 0.0f, 0.2f, 1.0f); 
-        //glClearColor(0.0f, 0.0f, 0.0f, 1.0f); 
-        glClearColor(sky_color.r * osc, sky_color.g * osc, sky_color.b * osc, 1.0f);
+        //glClearColor(sky_color.r * osc, sky_color.g * osc, sky_color.b * osc, 1.0f);
+        //glClearColor(sky_color.r, sky_color.g, sky_color.b, 1.0f);
+        glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         RenderScene(terrain_models, terrain_shader, g_camera.position_, view_mat, projection_mat);
         // render island refraction cap
@@ -395,9 +393,8 @@ int main()
         glDisable(GL_CLIP_DISTANCE0);
 
         // --- RENDER SCENE --- //
-        //glClearColor(0.2f, 0.0f, 0.2f, 1.0f); 
-        //glClearColor(0.0f, 0.0f, 0.0f, 1.0f); 
-        glClearColor(sky_color.r * osc, sky_color.g * osc, sky_color.b * osc, 1.0f);
+        glClearColor(sky_color.r * osc, sky_color.g * osc, sky_color.b * osc, 1.0f); // day simulation - sky color
+        // glClearColor(sky_color.r, sky_color.g, sky_color.b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         RenderScene(terrain_models, terrain_shader, g_camera.position_, view_mat, projection_mat);
         

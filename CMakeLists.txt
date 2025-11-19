@@ -49,7 +49,7 @@ target_link_libraries(${PROJECT_NAME}
 # Recommended compile warnings
 # -----------------------------
 if (MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4) # add back /WX to treat all warnings as errors 
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
 endif()

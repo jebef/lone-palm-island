@@ -17,7 +17,7 @@ All models were designed in [Blender](https://www.blender.org/). Textures for th
 Most of the magic lives in `water.frag`. If you are interested in designing a similar water shader, [ThinMatrix's OpenGL Water Tutorial](https://www.youtube.com/watch?v=HusvGeEDU_U) is an incredible resource. 
 
 ## Setup
-You will need `CMake` and `vcpkg` to build and run this demo.
+You will need `CMake`, `vcpkg`, and `ninja` to build this demo.
 
 ***NOTE:*** this CMake preset requires an environment variable `VCPKG_ROOT` which should point to the root directory where your version of `vcpkg` is installed. 
 

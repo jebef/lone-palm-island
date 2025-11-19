@@ -1,6 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <string>
 #include "core.h"
 #include "camera.h"
 #include "stb_image_write.h"

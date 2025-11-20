@@ -14,7 +14,7 @@ const unsigned int g_screen_height= 900;
 unsigned int g_screen_width_p = 0; // set dynamically in main
 unsigned int g_screen_height_p = 0;
 // Camera // 
-glm::vec3 g_camera_position = glm::vec3(5.0f, 5.0f, 10.0f);
+glm::vec3 g_camera_position = glm::vec3(5.0f, 5.0f, 30.0f);
 Camera g_camera(g_camera_position);
 // Mouse // 
 float g_last_x = g_screen_width / 2.0f;

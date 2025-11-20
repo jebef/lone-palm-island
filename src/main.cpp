@@ -67,9 +67,6 @@ int main()
         return -1;
     }
 
-    // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
-    //stbi_set_flip_vertically_on_load(true);
-
     // ----------- CONSTRUCT SHADER PROGRAMS ----------- //
     Shader terrain_shader = Shader("shaders/terrain.vert", "shaders/terrain.frag");
     Shader water_shader = Shader("shaders/water.vert", "shaders/water.frag");
@@ -108,19 +105,15 @@ int main()
     
 
     // ----------- DEFINE LIGHTING UNIFORMS ----------- // 
-
     // global properties 
     bool directional_only = false; // default is false
     float reflectivity = 32.0f;
+
     // directional light 
     glm::vec3 dl_direction = glm::vec3(0.0f, -1.0f, 0.0f);
-
     glm::vec3 dl_ambient = glm::vec3(0.1f, 0.1f, 0.1f);
     glm::vec3 dl_diffuse = glm::vec3(0.8f, 0.8f, 0.8f);
     glm::vec3 dl_specular = glm::vec3(1.0f, 1.0f, 1.0f);
-    // glm::vec3 dl_ambient = glm::vec3(0.0f);
-    // glm::vec3 dl_diffuse = glm::vec3(0.0f);
-    // glm::vec3 dl_specular = glm::vec3(0.0f);
 
     // point lights
     glm::vec3 light_position = glm::vec3(3.0f, 3.0f, -3.0f);
@@ -133,13 +126,10 @@ int main()
     glm::vec3 pl_ambient = glm::vec3(0.1f, 0.1f, 0.1f);
     glm::vec3 pl_diffuse = glm::vec3(1.0f, 0.2f, 0.0f);
     glm::vec3 pl_specular = glm::vec3(1.0f, 1.0f, 1.0f);
-    // glm::vec3 pl_ambient = glm::vec3(0.0f);
-    // glm::vec3 pl_diffuse = glm::vec3(0.0f);
-    // glm::vec3 pl_specular = glm::vec3(0.0f);
-
     float pl_constant = 1.0f;
     float pl_linear = 0.09f;
     float pl_quadratic = 0.032f;
+
     // spot lights 
     glm::vec3 sl_position = glm::vec3(3.0f, 1.5f, 3.0f);
     glm::vec3 sl_direction = glm::vec3(-1.0f, -0.1f, -1.0f);
@@ -147,10 +137,11 @@ int main()
     // glm::vec3 sl_ambient = glm::vec3(0.1f);
     // glm::vec3 sl_diffuse = glm::vec3(1.0f, 0.8f, 0.8f);
     // glm::vec3 sl_specular = glm::vec3(1.0f);
+    
+    // disable spot light for now... 
     glm::vec3 sl_ambient = glm::vec3(0.0f);
     glm::vec3 sl_diffuse = glm::vec3(0.0f);
     glm::vec3 sl_specular = glm::vec3(0.0f);
-
     float sl_constant = 1.0f;
     float sl_linear = 0.2f;
     float sl_quadratic = 0.032f;
@@ -200,8 +191,8 @@ int main()
     water_shader.setInt("dudv_map", 2);
     water_shader.setInt("normal_map", 3);
     // load dudv and normal textures 
-    unsigned int water_dudv = TextureFromFile("assets/textures/water/dudv.png", ".");
-    unsigned int water_normal = TextureFromFile("assets/textures/water/normal.png", ".");
+    unsigned int water_dudv = TextureFromFile("/assets/textures/water/dudv.png", ".");
+    unsigned int water_normal = TextureFromFile("/assets/textures/water/normal.png", ".");
     // init water frame buffers 
     WaterFrameBuffers(water_fbos);
     // set static model matrix uniform 
@@ -289,8 +280,10 @@ int main()
 
 
     // ----------- SET GLOBAL STATES ----------- //
+    // enable depth testing 
     glEnable(GL_DEPTH_TEST);
 
+    // day simulation
     float osc = 0.0f;
     float day_speed = 0.25f;
     glm::vec3 sky_color = glm::vec3(0.7f, 0.7f, 1.0f);
@@ -332,7 +325,6 @@ int main()
         glm::mat4 light_orb_model_mat = glm::mat4(1.0f);
         light_orb_model_mat = glm::translate(light_orb_model_mat, pl_position);
       
-
         // enable clipping 
         glEnable(GL_CLIP_DISTANCE0);
 
@@ -341,7 +333,6 @@ int main()
         // retrieve projection matrix
         glm::mat4 projection_mat = glm::perspective(glm::radians(g_camera.zoom_), (float)g_screen_width / (float)g_screen_height, 0.1f, 100.0f);
 
-        
         // --- RENDER SCENE TO REFLECTION BUFFER --- //
         // activate terrain shader 
         terrain_shader.use();
@@ -357,9 +348,7 @@ int main()
         terrain_shader.setVec4("clip_plane", reflection_clip_plane);
         // bind reflection framebuffer and render terrain
         water_fbos.BindReflectionFrameBuffer();
-        //glClearColor(sky_color.r * osc, sky_color.g * osc, sky_color.b * osc, 1.0f);
-        //glClearColor(sky_color.r, sky_color.g, sky_color.b, 1.0f);
-        glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+        glClearColor(sky_color.r * osc, sky_color.g * osc, sky_color.b * osc, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         RenderScene(terrain_models, terrain_shader, reflected_camera_pos, reflection_view_mat, projection_mat);
         // render island reflection cap
@@ -377,9 +366,7 @@ int main()
         terrain_shader.setVec4("clip_plane", refraction_clip_plane);
         // bind refraction framebuffer and render terrain
         water_fbos.BindRefractionFrameBuffer();
-        //glClearColor(sky_color.r * osc, sky_color.g * osc, sky_color.b * osc, 1.0f);
-        //glClearColor(sky_color.r, sky_color.g, sky_color.b, 1.0f);
-        glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+        glClearColor(sky_color.r * osc, sky_color.g * osc, sky_color.b * osc, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         RenderScene(terrain_models, terrain_shader, g_camera.position_, view_mat, projection_mat);
         // render island refraction cap
@@ -394,7 +381,6 @@ int main()
 
         // --- RENDER SCENE --- //
         glClearColor(sky_color.r * osc, sky_color.g * osc, sky_color.b * osc, 1.0f); // day simulation - sky color
-        // glClearColor(sky_color.r, sky_color.g, sky_color.b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         RenderScene(terrain_models, terrain_shader, g_camera.position_, view_mat, projection_mat);
         
@@ -441,15 +427,13 @@ void RenderScene(const std::vector<Model> models, Shader shader, glm::vec3 camer
 
     // render models 
     for (const Model& model : models) {
-        // set model matrix uniform 
         shader.setMat4("model", model.model_matrix);
-        // compute/set normal matrix uniform 
+
         glm::mat3 normal = glm::mat3(glm::transpose(glm::inverse(model.model_matrix)));
         shader.setMat3("normal", normal);
 
         shader.setFloat("specular_intenstiy", model.specular_intensity);
 
-        // draw model
         model.Draw(shader);
     }
 }

@@ -1,4 +1,5 @@
 # Lone Palm Island 
+![beauty shot](/beauty-shot.png)
 This demo is a small personal capstone - a snapshot of all I've learned from the [LearnOpenGL](https://learnopengl.com/) online textbook (thus far). Some quick notes on the source code, assets, and shaders: 
 
 ### Source 
@@ -21,6 +22,12 @@ You will need `CMake`, `vcpkg`, and `ninja` to build this demo.
 
 ***NOTE:*** this CMake preset requires an environment variable `VCPKG_ROOT` which should point to the root directory where your version of `vcpkg` is installed. 
 
+### Dependencies 
+- `glad` &nbsp; &nbsp; &nbsp; &nbsp; &rarr; &nbsp; &nbsp; dynamically loads OpenGL functions 
+- `glfw3` &nbsp; &nbsp; &nbsp; &rarr; &nbsp; &nbsp; assists in window creation, context managment, and I/O
+- `glm` &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &rarr; &nbsp; &nbsp; powerful math library 
+- `assimp` &nbsp; &nbsp; &rarr; &nbsp; &nbsp; loads assets - 3D models, etc. 
+
 ### 1. Clone 
 ```
 git clone https://github.com/jebef/lone-palm-island.git
@@ -38,3 +45,9 @@ cmake --build build/release
 
 - `WASD` and `mouse` for movement 
 - `esc` to exit 
+
+## Author 
+**Wyatt Jebef** - rendering pipeline, shaders, 3D models, textures, build system.  
+[wyatt-jebef.com](https://wyatt-jebef.com/)  
+
+Last Updated: 11/18/25

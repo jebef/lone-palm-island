@@ -20,7 +20,6 @@ public:
     unsigned int GetRefractionTexture();
     unsigned int GetRefractionDepthTexture();
 
-
 private:
     const unsigned int kReflectionWidth = 320;
     const unsigned int kReflectionHeight = 180;

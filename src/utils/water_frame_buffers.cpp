@@ -42,7 +42,7 @@ void WaterFrameBuffers::BindRefractionFrameBuffer() {
 }
 
 void WaterFrameBuffers::UnbindCurrentFrameBuffer() {
-    glBindFramebuffer(GL_FRAMEBUFFER, 0); // 0 is default frame buffer id 
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);                  // 0 is default frame buffer id 
     glViewport(0, 0, g_screen_width_p, g_screen_height_p); // YOU WILL REMEMBER THIS BUG (p)
 }
 
